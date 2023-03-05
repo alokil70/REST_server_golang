@@ -17,7 +17,7 @@ import (
 
 func main() {
 	logger := logging.GetLogger()
-	
+
 	logger.Info("create router")
 	router := httprouter.New()
 

@@ -29,7 +29,7 @@ func (d *db) Create(ctx context.Context, user user.User) (string, error) {
 		return oid.Hex(), nil
 	}
 	d.logger.Trace(user)
-	return "", fmt.Errorf("failed to convert objectid to hex")
+	return "", fmt.Errorf("failed to convert objectid to hex. oid: %s", oid)
 }
 
 // Delete implements user.Storage
@@ -38,8 +38,11 @@ func (*db) Delete(ctx context.Context, id string) error {
 }
 
 // FindOne implements user.Storage
-func (*db) FindOne(ctx context.Context, id string) (user.User, error) {
-	panic("unimplemented")
+func (*db) FindOne(ctx context.Context, id string) (u user.User, err error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return u, fmt.Errorf("failed convert hex to objectID %s", id)
+	}
 }
 
 // Update implements user.Storage
