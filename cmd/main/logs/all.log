@@ -1,0 +1,4 @@
+time="2023-03-05T15:40:09+03:00" level=info msg="create router" func="main.main()" file="app.go:18"
+time="2023-03-05T15:40:09+03:00" level=info msg="read application config" func="test_RESTserver_01/internal/config.GetConfig.func1()" file="config.go:25"
+time="2023-03-05T15:40:09+03:00" level=info func="test_RESTserver_01/internal/config.GetConfig.func1()" file="config.go:29"
+time="2023-03-05T15:40:09+03:00" level=fatal msg="open config.yml: The system cannot find the file specified." func="test_RESTserver_01/internal/config.GetConfig.func1()" file="config.go:30"
