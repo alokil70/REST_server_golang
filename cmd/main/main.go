@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	author "test_RESTserver_01/internal/author/db"
 	"test_RESTserver_01/internal/config"
 	"test_RESTserver_01/internal/user"
+	"test_RESTserver_01/pkg/client/postgresql"
 	"test_RESTserver_01/pkg/logging"
 	"time"
 
@@ -22,6 +25,21 @@ func main() {
 	router := httprouter.New()
 
 	cfg := config.GetConfig()
+
+	postgreSQLClient, err := postgresql.NewClient(context.TODO(), 3, cfg.Storage)
+	if err != nil {
+		logger.Fatalf("error client: %v", err)
+	}
+
+	repository := author.NewRepository(postgreSQLClient, logger)
+	all, err := repository.FindAll(context.TODO())
+	if err != nil {
+		logger.Fatalf("error client: %v", err)
+	}
+
+	for _, a := range all {
+		logger.Infof("%v", a)
+	}
 
 	logger.Info("register user handler")
 	handler := user.NewHandler(logger)

@@ -43,6 +43,10 @@ func (*db) FindOne(ctx context.Context, id string) (u user.User, err error) {
 	if err != nil {
 		return u, fmt.Errorf("failed convert hex to objectID %s", id)
 	}
+	
+	fmt.Printf("oid: %v\n", oid)
+
+	return
 }
 
 // Update implements user.Storage
