@@ -14,6 +14,15 @@ type Config struct {
 		BindIP string `yaml:"bind_ip"`
 		Port   string `yaml:"port"`
 	} `yaml:"listen"`
+	Storage	StorageConfig	`yaml:"storage"`
+}
+
+type StorageConfig struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Database string `json:"database"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 var instance *Config
@@ -30,6 +39,6 @@ func GetConfig() *Config {
 			logger.Fatal(err)
 		}
 	})
-	
+
 	return instance
 }
