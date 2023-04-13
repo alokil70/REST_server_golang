@@ -2,6 +2,7 @@ package author
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"test_RESTserver_01/internal/author"
@@ -38,7 +39,9 @@ func (r *repository) Create(ctx context.Context, author *author.Author) error {
 	r.logger.Trace(fmt.Sprintf("SQL Query: %s", formatQuery(q)))
 
 	if err := r.client.QueryRow(ctx, q, author.Name).Scan(&author.ID); err != nil {
-		if pgErr, ok := err.(*pgconn.PgError); ok {
+		var pgErr *pgconn.PgError
+		if errors.Is(err, pgErr) {
+			pgErr = err.(*pgconn.PgError)
 			e := fmt.Errorf(fmt.Sprintf("SQL error: %s, Detail: %s, Where: %s, Code: %s, SqlState: %s", pgErr.Message, pgErr.Detail, pgErr.Where, pgErr.Code, pgErr.SQLState()))
 			r.logger.Logger.Error(e)
 			return e

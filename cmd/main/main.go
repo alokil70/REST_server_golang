@@ -8,7 +8,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	author "test_RESTserver_01/internal/author/db"
+	authorRepo "test_RESTserver_01/internal/author/db"
+	"test_RESTserver_01/internal/author"
 	"test_RESTserver_01/internal/config"
 	"test_RESTserver_01/internal/user"
 	"test_RESTserver_01/pkg/client/postgresql"
@@ -31,19 +32,38 @@ func main() {
 		logger.Fatalf("error client: %v", err)
 	}
 
-	repository := author.NewRepository(postgreSQLClient, logger)
+	repository := authorRepo.NewRepository(postgreSQLClient, logger)
+
+	// newAuthor := author.Author{
+	// 	Name: "Маяковский",
+	// }
+	// err = repository.Create(context.TODO(), &newAuthor)
+	// if err != nil {
+	// 	logger.Fatalf("error create author: %v", err)
+	// }
+
+	one, err := repository.FindOne(context.TODO(), "f8a6a73d-b720-4249-a59f-590d254cc185")
+	if err != nil {
+		logger.Fatalf("error findone: %v", err)
+	}
+	logger.Infof("%v", one)
+
 	all, err := repository.FindAll(context.TODO())
 	if err != nil {
-		logger.Fatalf("error client: %v", err)
+		logger.Fatalf("error findall: %v", err)
 	}
 
 	for _, a := range all {
 		logger.Infof("%v", a)
 	}
 
+	logger.Info("register author handler")
+	authorHandler := author.NewHandler(logger)
+	authorHandler.Register(router)
+
 	logger.Info("register user handler")
-	handler := user.NewHandler(logger)
-	handler.Register(router)
+	userHandler := user.NewHandler(logger)
+	userHandler.Register(router)
 
 	start(router, cfg)
 }
