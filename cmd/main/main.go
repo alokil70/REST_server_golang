@@ -8,8 +8,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	authorRepo "test_RESTserver_01/internal/author/db"
 	"test_RESTserver_01/internal/author"
+	authorRepo "test_RESTserver_01/internal/author/db"
 	"test_RESTserver_01/internal/config"
 	"test_RESTserver_01/internal/user"
 	"test_RESTserver_01/pkg/client/postgresql"
@@ -58,7 +58,7 @@ func main() {
 	}
 
 	logger.Info("register author handler")
-	authorHandler := author.NewHandler(logger)
+	authorHandler := author.NewHandler(repository, logger)
 	authorHandler.Register(router)
 
 	logger.Info("register user handler")

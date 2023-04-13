@@ -1,6 +1,8 @@
 package author
 
 import (
+	"context"
+	"encoding/json"
 	"net/http"
 	"test_RESTserver_01/internal/handlers"
 	"test_RESTserver_01/pkg/logging"
@@ -16,12 +18,14 @@ const (
 )
 
 type handler struct {
-	logger *logging.Logger
+	logger		*logging.Logger
+	repository	Repository
 }
 
-func NewHandler(logger *logging.Logger) handlers.Handler {
+func NewHandler(repository Repository, logger *logging.Logger) handlers.Handler {
 	return &handler{
 		logger: logger,
+		repository: repository,
 	}
 }
 
@@ -35,8 +39,22 @@ func (h *handler) Register(router *httprouter.Router) {
 }
 
 func (h *handler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	w.WriteHeader(200)
-	w.Write([]byte("list of author"))
+	all, err := h.repository.FindAll(context.TODO())
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	allBytes, err := json.Marshal(all)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(allBytes)
 }
 
 func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
